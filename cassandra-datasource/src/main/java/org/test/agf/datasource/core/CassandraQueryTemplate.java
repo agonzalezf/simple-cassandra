@@ -17,8 +17,6 @@ import com.datastax.driver.core.Statement;
 
 public class CassandraQueryTemplate {
 	
-	// private static final Logger log = LoggerFactory.getLogger(CassandraQueryTemplate.class);
-	
 	protected CassandraConnectionManager ccm = null;
 	protected ConcurrentHashMap<String, PreparedStatement> psStms = new ConcurrentHashMap<String, PreparedStatement>();
 	
@@ -46,30 +44,28 @@ public class CassandraQueryTemplate {
 		return ccm;
 	}
 
-	public List<Object> executeQuery(String sql, Object[] args, RowMapper mapper) throws Exception {
+	public <T> List<T> executeQuery(String sql, Object[] args, RowMapper<T> mapper) throws Exception {
 		return executeQuery(getSession(), sql, args, mapper, null);
 	}
 	
-	public List<Object> executeQuery(Session session, String sql, Object[] args, RowMapper mapper) throws Exception {
+	public <T> List<T> executeQuery(Session session, String sql, Object[] args, RowMapper<T> mapper) throws Exception {
 		return executeQuery(session, sql, args, mapper, null);
 	}
 	
-	public List<Object> executeQuery(Session session, String sql, Object[] args, RowMapper mapper, ConsistencyLevel cLevel) throws Exception {
+	public <T> List<T> executeQuery(Session session, String sql, Object[] args, RowMapper<T> mapper, ConsistencyLevel cLevel) throws Exception {
 		return executePaginatedQuery(session, sql, args, null, mapper, cLevel).getResults();
 	}
 	
-	public PaginatedResult executePaginatedQuery(String sql, Object[] args, Integer fetchSize, RowMapper mapper, ConsistencyLevel cLevel) throws Exception {
+	public <T> PaginatedResult<T> executePaginatedQuery(String sql, Object[] args, Integer fetchSize, RowMapper<T> mapper, ConsistencyLevel cLevel) throws Exception {
 		return executePaginatedQuery(getSession(), sql, args, fetchSize, mapper, cLevel);
 	}
 	
-	public PaginatedResult executePaginatedQuery(Session session, String sql, Object[] args, Integer fetchSize, RowMapper mapper, ConsistencyLevel cLevel) throws Exception {
-		PaginatedResult ret = null;
-		// long begin = System.currentTimeMillis();		
+	public <T> PaginatedResult<T> executePaginatedQuery(Session session, String sql, Object[] args, Integer fetchSize, RowMapper<T> mapper, ConsistencyLevel cLevel) throws Exception {
+		PaginatedResult<T> ret = null;
 		BoundStatement bs = generateStatement(session, sql, args, fetchSize,cLevel);
 		int queryFetchSize = getFetchSize(session, bs);
 		ResultSet rs = session.execute(bs);
-		ret = new PaginatedResult(rs, mapper, queryFetchSize);
-		// log.debug("Executed query({}) with FetchSize ({}) in ({} ms)", sql, fetchSize, (System.currentTimeMillis() - begin) );
+		ret = new PaginatedResult<T>(rs, mapper, queryFetchSize);
 		return ret;
 	}
 	

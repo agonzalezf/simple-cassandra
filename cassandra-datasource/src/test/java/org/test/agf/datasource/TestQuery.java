@@ -21,12 +21,13 @@ import org.test.agf.datasource.mapper.RowMapper;
 import org.test.agf.datasource.mapper.SkuAliasMapper;
 import org.test.agf.datasource.mapper.SkuFamilyMapper;
 import org.test.agf.datasource.mapper.UserMapper;
+import org.test.agf.datasource.objects.User;
 import org.test.agf.datasource.query.PaginatedResult;
 
 public class TestQuery {
 	
 	protected static CassandraQueryTemplate cst = null;
-	protected static RowMapper mapper = null;
+	protected static RowMapper<User> mapper = null;
 	
 	@BeforeClass
 	public static void init() {
@@ -44,7 +45,7 @@ public class TestQuery {
 	// @Test
 	public void testSimpleQuery() {
 		try {
-			List<Object> ret = cst.executeQuery("select * from masterdata_user_movicatt", null, mapper);
+			List<User> ret = cst.executeQuery("select * from masterdata_user_movicatt", null, mapper);
 			assertEquals(true, ret.size() > 0);
 		} catch (Exception e) {
 			fail("Error at execute query " + e);
@@ -54,7 +55,7 @@ public class TestQuery {
 	// @Test
 	public void testPaginatedQuery() {
 		try {
-			PaginatedResult ret = cst.executePaginatedQuery("select * from masterdata_user_movicatt", null, new Integer(10), mapper, null);
+			PaginatedResult<User> ret = cst.executePaginatedQuery("select * from masterdata_user_movicatt", null, new Integer(10), mapper, null);
 			assertEquals(true, ret.getResults().size() == 10);
 			
 			ret.nextResults();
@@ -79,7 +80,7 @@ public class TestQuery {
 	
 	// @Test
 	public void testTimeoutPaginatedQuery() throws Exception {
-		PaginatedResult ret = cst.executePaginatedQuery("select * from masterdata_user_movicatt", null, new Integer(10), mapper, null);
+		PaginatedResult<User> ret = cst.executePaginatedQuery("select * from masterdata_user_movicatt", null, new Integer(10), mapper, null);
 		assertEquals(true, ret.getResults().size() == 10);
 		
 		Thread.sleep(cst.getConnectionParams().getTimeout() * 40);
