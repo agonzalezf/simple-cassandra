@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="file" class="ch.qos.logback.core.FileAppender">
+		<file>${catalina.base}/simple-cassandra.log</file>
+		<append>false</append>
+		<encoder>
+			 <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level [%X{client}] [%logger{35}] - %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      		<fileNamePattern>${catalina.base}/simple-cassandra.%d{yyyy-MM-dd}.log</fileNamePattern>
+      		<maxHistory>30</maxHistory> 
+    	</rollingPolicy>		
+	</appender>
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			 <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level [%X{client}] [%logger{35}] - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.apache" level="INFO" additivity="false">
+		<appender-ref ref="file" />
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org.springframework" level="INFO" additivity="false">
+		<appender-ref ref="file" />
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org.test.agf" level="INFO" additivity="false">
+		<appender-ref ref="file" />
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.datastax" level="INFO" additivity="false">
+		<appender-ref ref="file" />
+		<appender-ref ref="stdout" />
+	</logger>
+	
+	<root level="ERROR">
+		<appender-ref ref="stdout" />
+		<appender-ref ref="file" />
+	</root>
+</configuration>
